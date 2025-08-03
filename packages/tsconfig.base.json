@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "ES6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@eot/core": ["../core/src"],
+      "@eot/ui": ["../ui/src"],
+      "@eot/identity": ["../modules/identity/src"],
+      "@eot/organizations": ["../modules/organizations/src"],
+      "@eot/storage": ["../modules/storage/src"],
+      "@eot/integrations": ["../modules/integrations/src"],
+      "@eot/analytics": ["../modules/analytics/src"],
+      "@eot/audit": ["../modules/audit/src"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

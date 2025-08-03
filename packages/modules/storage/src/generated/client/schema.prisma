@@ -1,0 +1,503 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ================================
+// ENUMS
+// ================================
+
+enum UserRole {
+  DIRECTOR
+  PROJECT_MANAGER
+  SCHEDULER
+  ADMIN
+  USER
+  VIEWER
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum ContractType {
+  FIDIC_RED
+  FIDIC_YELLOW
+  FIDIC_SILVER
+  NEC3
+  NEC4
+  CUSTOM
+}
+
+enum DelayType {
+  CLIENT_DELAY
+  CONTRACTOR_DELAY
+  WEATHER
+  THIRD_PARTY
+  FORCE_MAJEURE
+}
+
+enum DelayStatus {
+  DETECTED
+  UNDER_REVIEW
+  CLAIM_PREPARED
+  CLAIM_SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum ClaimStatus {
+  DRAFT
+  UNDER_REVIEW
+  SUBMITTED
+  UNDER_EVALUATION
+  APPROVED
+  REJECTED
+  SETTLED
+}
+
+enum EvidenceType {
+  EMAIL
+  DOCUMENT
+  PHOTO
+  MEETING_MINUTES
+  SITE_REPORT
+  WEATHER_DATA
+  SCHEDULE
+  RFI
+  CHANGE_ORDER
+}
+
+enum ScheduleFormat {
+  PRIMAVERA_P6
+  MS_PROJECT
+  ASTA
+  CSV
+  EXCEL
+}
+
+enum ExportFormat {
+  PDF
+  WORD
+  HTML
+  EXCEL
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActionItemStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MfaMethod {
+  TOTP
+  SMS
+  EMAIL
+}
+
+// ================================
+// CORE TABLES
+// ================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String   @unique
+  isActive  Boolean  @default(true)
+  settings  Json? // OrganizationSettings JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users     User[]
+  projects  Project[]
+  files     FileMetadata[]
+  auditLogs AuditLog[]
+  events    AnalyticsEvent[]
+  quotas    StorageQuota[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  firstName      String
+  lastName       String
+  role           UserRole
+  organizationId String
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedProjects Project[]
+  delayEvents      DelayEvent[]
+  claims           Claim[]
+  evidence         Evidence[]
+  actionItems      ActionItem[]
+  filesUploaded    FileMetadata[]       @relation("UploadedBy")
+  sessions         SessionData[]
+  mfaSettings      MfaSettings?
+  passwordResets   PasswordResetToken[]
+  auditLogs        AuditLog[]
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("users")
+}
+
+model Project {
+  id                String        @id @default(cuid())
+  name              String
+  description       String?
+  location          String?
+  organizationId    String
+  status            ProjectStatus @default(PLANNING)
+  contractValue     Decimal?      @db.Decimal(15, 2)
+  contractType      ContractType?
+  startDate         DateTime
+  plannedCompletion DateTime?
+  currentCompletion DateTime?
+  healthScore       Int?          @default(100)
+  projectManagerId  String?
+  metadata          Json? // Additional project metadata
+  isDeleted         Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectManager User?        @relation(fields: [projectManagerId], references: [id])
+  delayEvents    DelayEvent[]
+  claims         Claim[]
+  actionItems    ActionItem[]
+  schedules      Schedule[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([projectManagerId])
+  @@map("projects")
+}
+
+model DelayEvent {
+  id               String      @id @default(cuid())
+  projectId        String
+  activityId       String? // External activity reference
+  activityName     String
+  detectionDate    DateTime
+  delayDays        Int
+  causeType        DelayType
+  probabilityScore Int?        @default(0) @db.SmallInt
+  evidenceStrength Int?        @default(0) @db.SmallInt
+  status           DelayStatus @default(DETECTED)
+  description      String?
+  estimatedCost    Decimal?    @db.Decimal(15, 2)
+  criticalPath     Boolean     @default(false)
+  detectedById     String
+  metadata         Json? // Additional delay metadata
+  isDeleted        Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  // Relations
+  project    Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  detectedBy User       @relation(fields: [detectedById], references: [id])
+  claims     Claim[]
+  evidence   Evidence[]
+
+  @@index([projectId])
+  @@index([status])
+  @@index([causeType])
+  @@index([detectionDate])
+  @@map("delay_events")
+}
+
+model Claim {
+  id              String      @id @default(cuid())
+  projectId       String
+  delayEventId    String?
+  referenceNumber String      @unique
+  title           String
+  description     String?
+  submissionDate  DateTime?
+  noticeDate      DateTime?
+  claimAmount     Decimal?    @db.Decimal(15, 2)
+  timeImpactDays  Int?
+  status          ClaimStatus @default(DRAFT)
+  responseDueDate DateTime?
+  submittedById   String?
+  workflow        Json? // Workflow state and history
+  metadata        Json? // Additional claim metadata
+  isDeleted       Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  delayEvent  DelayEvent? @relation(fields: [delayEventId], references: [id])
+  submittedBy User?       @relation(fields: [submittedById], references: [id])
+  evidence    Evidence[]
+
+  @@index([projectId])
+  @@index([status])
+  @@index([delayEventId])
+  @@index([submissionDate])
+  @@map("claims")
+}
+
+model Evidence {
+  id             String       @id @default(cuid())
+  delayEventId   String?
+  claimId        String?
+  type           EvidenceType
+  title          String
+  description    String?
+  sourceSystem   String?
+  filePath       String?
+  fileId         String? // Reference to FileMetadata
+  relevanceScore Int?         @default(0) @db.SmallInt
+  extractedText  String?      @db.Text
+  metadata       Json? // Type-specific metadata
+  uploadedById   String
+  isDeleted      Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  delayEvent DelayEvent?   @relation(fields: [delayEventId], references: [id])
+  claim      Claim?        @relation(fields: [claimId], references: [id])
+  uploadedBy User          @relation(fields: [uploadedById], references: [id])
+  file       FileMetadata? @relation(fields: [fileId], references: [id])
+
+  @@index([delayEventId])
+  @@index([claimId])
+  @@index([type])
+  @@map("evidence")
+}
+
+model Schedule {
+  id           String         @id @default(cuid())
+  projectId    String
+  name         String
+  description  String?
+  format       ScheduleFormat
+  version      String?
+  baselineDate DateTime?
+  statusDate   DateTime?
+  filePath     String?
+  fileId       String? // Reference to FileMetadata
+  metadata     Json? // Schedule-specific metadata
+  isBaseline   Boolean        @default(false)
+  isDeleted    Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  // Relations
+  project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  file    FileMetadata? @relation(fields: [fileId], references: [id])
+
+  @@index([projectId])
+  @@index([isBaseline])
+  @@map("schedules")
+}
+
+model ActionItem {
+  id           String           @id @default(cuid())
+  title        String
+  description  String?
+  priority     Priority         @default(MEDIUM)
+  dueDate      DateTime
+  projectId    String
+  assignedToId String
+  status       ActionItemStatus @default(PENDING)
+  completedAt  DateTime?
+  metadata     Json? // Additional action item metadata
+  isDeleted    Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedTo User    @relation(fields: [assignedToId], references: [id])
+
+  @@index([projectId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("action_items")
+}
+
+// ================================
+// STORAGE & FILES
+// ================================
+
+model FileMetadata {
+  id             String   @id @default(cuid())
+  filename       String
+  originalName   String
+  mimeType       String
+  size           BigInt
+  checksum       String?
+  organizationId String
+  uploadedById   String
+  path           String
+  isPublic       Boolean  @default(false)
+  tags           String[] @default([])
+  metadata       Json? // File-specific metadata
+  isDeleted      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy   User         @relation("UploadedBy", fields: [uploadedById], references: [id])
+  evidence     Evidence[]
+  schedules    Schedule[]
+
+  @@index([organizationId])
+  @@index([uploadedById])
+  @@index([mimeType])
+  @@map("file_metadata")
+}
+
+model StorageQuota {
+  id             String   @id @default(cuid())
+  organizationId String   @unique
+  usedBytes      BigInt   @default(0)
+  limitBytes     BigInt
+  fileCount      Int      @default(0)
+  maxFileCount   Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("storage_quotas")
+}
+
+// ================================
+// AUTHENTICATION & SECURITY
+// ================================
+
+model SessionData {
+  id             String   @id @default(cuid())
+  userId         String
+  deviceInfo     Json // DeviceInfo JSON
+  location       Json? // GeoLocation JSON
+  expiresAt      DateTime
+  lastActivityAt DateTime @default(now())
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("session_data")
+}
+
+model MfaSettings {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  isEnabled   Boolean   @default(false)
+  method      MfaMethod
+  secret      String?
+  backupCodes String[]  @default([])
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mfa_settings")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// ================================
+// ANALYTICS & AUDIT
+// ================================
+
+model AnalyticsEvent {
+  id             String   @id @default(cuid())
+  eventType      String
+  userId         String?
+  organizationId String
+  properties     Json     @default("{}")
+  timestamp      DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@map("analytics_events")
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  action         String
+  entityType     String
+  entityId       String
+  userId         String
+  organizationId String
+  changes        Json? // Record of what changed
+  metadata       Json? // Additional audit metadata
+  createdAt      DateTime @default(now())
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
