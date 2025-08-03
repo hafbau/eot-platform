@@ -15,12 +15,13 @@ import {
 } from 'lucide-react';
 import { getCurrentUser, logout } from '../../lib/api/auth';
 import { getInitials } from '@eot/ui';
+import { User as UserType } from '../../lib/types';
 
 const NextNavbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   
   useEffect(() => {
     // Only check user authentication after component mounts (client-side)

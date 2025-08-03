@@ -27,8 +27,21 @@ import {
   updateActionItem
 } from '../../../lib/api/dashboard';
 import { formatCurrency, formatNumber, formatPercentage } from '../../../lib/utils';
+import { 
+  type DashboardStats, 
+  type ClaimsFunnelData, 
+  type DelayTrendChartData, 
+  type DeadlineFromAPI 
+} from '../../../lib/types';
 
-interface DashboardStats {
+// Dashboard specific types for chart data
+interface DashboardDelayTrend {
+  month: string;
+  delays: number;
+  claims: number;
+}
+
+interface LocalDashboardStats {
   activeProjects: number;
   totalProjects: number;
   openClaims: number;
@@ -52,10 +65,10 @@ interface ActionItem {
 }
 
 const DashboardPage = () => {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [claimsFunnel, setClaimsFunnel] = useState<any[]>([]);
-  const [delayTrend, setDelayTrend] = useState<any[]>([]);
-  const [upcomingDeadlines, setUpcomingDeadlines] = useState<any[]>([]);
+  const [stats, setStats] = useState<LocalDashboardStats | null>(null);
+  const [claimsFunnel, setClaimsFunnel] = useState<ClaimsFunnelData[]>([]);
+  const [delayTrend, setDelayTrend] = useState<DashboardDelayTrend[]>([]);
+  const [upcomingDeadlines, setUpcomingDeadlines] = useState<UpcomingDeadline[]>([]);
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

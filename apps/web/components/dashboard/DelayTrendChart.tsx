@@ -14,7 +14,12 @@ interface DelayTrendChartProps {
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+    dataKey: string;
+  }>;
   label?: string;
 }
 

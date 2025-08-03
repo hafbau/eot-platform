@@ -306,7 +306,7 @@ export async function seedDatabase() {
     console.log('✓ Claims created');
 
     // 6. Create Evidence
-    const evidence = await Promise.all([
+    await Promise.all([
       db.evidence.create({
         data: {
           id: 'evidence-1',
@@ -381,7 +381,7 @@ export async function seedDatabase() {
     console.log('✓ Evidence created');
 
     // 7. Create Action Items
-    const actionItems = await Promise.all([
+    await Promise.all([
       db.actionItem.create({
         data: {
           id: 'action-1',

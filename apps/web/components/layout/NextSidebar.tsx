@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import { cn } from '@eot/ui';
+import { type NavItem } from '../../lib/types';
 import {
   LayoutDashboard,
   Building2,
@@ -22,80 +23,80 @@ const NextSidebar = () => {
   const projectId = params?.projectId as string;
   
   // Main navigation items
-  const mainNavItems = [
+  const mainNavItems: Array<NavItem & { current: boolean }> = [
     {
-      name: 'Dashboard',
-      href: '/dashboard',
+      title: 'Dashboard',
+      url: '/dashboard',
       icon: LayoutDashboard,
       current: pathname === '/dashboard'
     },
     {
-      name: 'Projects',
-      href: '/projects',
+      title: 'Projects',
+      url: '/projects',
       icon: Building2,
       current: pathname === '/projects' || pathname.startsWith('/projects')
     },
     {
-      name: 'Analytics',
-      href: '/analytics',
+      title: 'Analytics',
+      url: '/analytics',
       icon: BarChart3,
       current: pathname === '/analytics'
     }
   ];
   
   // Project-specific navigation items (shown when viewing a specific project)
-  const projectNavItems = projectId ? [
+  const projectNavItems: Array<NavItem & { current: boolean }> = projectId ? [
     {
-      name: 'Project Dashboard',
-      href: `/projects/${projectId}/dashboard`,
+      title: 'Project Dashboard',
+      url: `/projects/${projectId}/dashboard`,
       icon: LayoutDashboard,
       current: pathname === `/projects/${projectId}/dashboard`
     },
     {
-      name: 'Schedule',
-      href: `/projects/${projectId}/schedule`,
+      title: 'Schedule',
+      url: `/projects/${projectId}/schedule`,
       icon: Calendar,
       current: pathname === `/projects/${projectId}/schedule`
     },
     {
-      name: 'Delays',
-      href: `/projects/${projectId}/delays`,
+      title: 'Delays',
+      url: `/projects/${projectId}/delays`,
       icon: AlertTriangle,
       current: pathname === `/projects/${projectId}/delays`
     },
     {
-      name: 'Evidence',
-      href: `/projects/${projectId}/evidence`,
+      title: 'Evidence',
+      url: `/projects/${projectId}/evidence`,
       icon: FileText,
       current: pathname === `/projects/${projectId}/evidence`
     },
     {
-      name: 'Claims',
-      href: `/projects/${projectId}/claims`,
+      title: 'Claims',
+      url: `/projects/${projectId}/claims`,
       icon: Gavel,
       current: pathname === `/projects/${projectId}/claims`
     }
   ] : [];
   
   // Settings navigation items
-  const settingsNavItems = [
+  const settingsNavItems: Array<NavItem & { current: boolean }> = [
     {
-      name: 'Settings',
-      href: '/settings',
+      title: 'Settings',
+      url: '/settings',
       icon: Settings,
       current: pathname === '/settings'
     },
     {
-      name: 'User Management',
-      href: '/settings/users',
+      title: 'User Management',
+      url: '/settings/users',
       icon: Users,
       current: pathname === '/settings/users'
     }
   ];
   
-  const NavItem = ({ item }: { item: any }) => (
+  const NavItemComponent = ({ item }: { item: NavItem & { current: boolean } }) => (
     <Link
-      href={item.href}
+      href={item.url}
       className={cn(
         'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
         item.current
@@ -103,8 +104,8 @@ const NextSidebar = () => {
           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
       )}
     >
-      <item.icon className="h-5 w-5 mr-3" />
-      {item.name}
+      {item.icon && React.createElement(item.icon, { className: "h-5 w-5 mr-3" })}
+      {item.title}
     </Link>
   );
   
@@ -118,7 +119,7 @@ const NextSidebar = () => {
           </h3>
           <nav className="space-y-1">
             {mainNavItems.map((item) => (
-              <NavItem key={item.name} item={item} />
+              <NavItemComponent key={item.title} item={item} />
             ))}
           </nav>
         </div>
@@ -131,7 +132,7 @@ const NextSidebar = () => {
             </h3>
             <nav className="space-y-1">
               {projectNavItems.map((item) => (
-                <NavItem key={item.name} item={item} />
+                <NavItemComponent key={item.title} item={item} />
               ))}
             </nav>
           </div>
@@ -144,7 +145,7 @@ const NextSidebar = () => {
           </h3>
           <nav className="space-y-1">
             {settingsNavItems.map((item) => (
-              <NavItem key={item.name} item={item} />
+              <NavItemComponent key={item.title} item={item} />
             ))}
           </nav>
         </div>

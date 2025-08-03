@@ -139,18 +139,107 @@ export interface Evidence {
 
 // Schedule types
 export const ScheduleFormat = {
-  PRIMAVERA_P6: 'primavera_p6',
-  MS_PROJECT: 'ms_project',
-  ASTA: 'asta',
-  CSV: 'csv',
-  EXCEL: 'excel'
-};
+  PRIMAVERA_P6: "primavera_p6",
+  MS_PROJECT: "ms_project", 
+  ASTA: "asta",
+  CSV: "csv",
+  EXCEL: "excel"
+} as const;
+
+export type ScheduleFormatType = typeof ScheduleFormat[keyof typeof ScheduleFormat];
+
+export interface ScheduleActivity {
+  id: string;
+  projectId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  duration: number;
+  progress: number;
+  predecessors: string[];
+  successors: string[];
+  resources: string[];
+  critical: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Export format types
 export const ExportFormat = {
-  PDF: 'pdf',
-  WORD: 'word',
-  HTML: 'html',
-  EXCEL: 'excel'
-};
+  PDF: "pdf",
+  WORD: "word",
+  HTML: "html",
+  EXCEL: "excel"
+} as const;
 
+export type ExportFormatType = typeof ExportFormat[keyof typeof ExportFormat];
+
+// Dashboard types
+export interface DashboardStats {
+  totalProjects: number;
+  activeProjects: number;
+  totalClaims: number;
+  claimsValue: number;
+  avgHealthScore: number;
+  totalDelays: number;
+}
+
+export interface ClaimsFunnelData {
+  stage: string;
+  count: number;
+  value: number;
+}
+
+export interface DelayTrendData {
+  date: string;
+  count: number;
+  type: DelayType;
+}
+
+// Alternative interface for chart data that has different structure
+export interface DelayTrendChartData {
+  month: string;
+  delays: number;
+  claims: number;
+}
+
+export interface UpcomingDeadline {
+  id: string;
+  title: string;
+  date: string;
+  type: "claim" | "milestone" | "deadline";
+  priority: "low" | "medium" | "high";
+  projectName: string;
+}
+
+// Alternative interface for deadline data from API
+export interface DeadlineFromAPI {
+  id: string;
+  projectName: string;
+  claimReference: string;
+  type: string;
+  dueDate: string;
+  daysRemaining: number;
+  priority: string;
+}
+
+// Chart types for Recharts
+export interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+    dataKey: string;
+  }>;
+  label?: string;
+}
+
+// Navigation types
+export interface NavItem {
+  title: string;
+  url: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  isActive?: boolean;
+  items?: NavItem[];
+}

@@ -89,5 +89,5 @@ export interface DatabaseFilter extends
   Partial<SearchFilter>, 
   Partial<OrganizationFilter>,
   Partial<UserAccessFilter> {
-  [key: string]: any;
+  [key: string]: unknown;
 }

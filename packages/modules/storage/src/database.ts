@@ -2,7 +2,6 @@ import { PrismaClient } from './generated/client';
 
 // Global declaration for development hot reload
 declare global {
-  // eslint-disable-next-line no-var
   var __prisma: PrismaClient | undefined;
 }
 

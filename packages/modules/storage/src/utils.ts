@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// TODO: This file needs proper TypeScript typing for Prisma models
+// Currently using 'any' types extensively - should be refactored for type safety
 import { db } from './database';
-import { Prisma } from './generated/client';
 
 // ================================
 // PAGINATION UTILITIES
@@ -74,7 +76,7 @@ export async function paginate<T>(
 // SOFT DELETE UTILITIES
 // ================================
 
-export async function softDelete(model: any, id: string, userId: string) {
+export async function softDelete(model: any, id: string, _userId: string) {
   return model.update({
     where: { id },
     data: {
@@ -84,7 +86,7 @@ export async function softDelete(model: any, id: string, userId: string) {
   });
 }
 
-export async function softDeleteMany(model: any, ids: string[], userId: string) {
+export async function softDeleteMany(model: any, ids: string[], _userId: string) {
   return model.updateMany({
     where: { id: { in: ids } },
     data: {

@@ -38,10 +38,26 @@ interface ProjectStats {
   claimsValue: number;
 }
 
+interface DelayItem {
+  id: string;
+  activityName: string;
+  description: string;
+  delayDays: number;
+  detectionDate: string;
+}
+
+interface ClaimItem {
+  id: string;
+  referenceNumber: string;
+  title: string;
+  claimAmount: number;
+  submissionDate?: string;
+}
+
 interface ProjectData {
   project: Project;
-  delays: any[];
-  claims: any[];
+  delays: DelayItem[];
+  claims: ClaimItem[];
   stats: ProjectStats;
 }
 

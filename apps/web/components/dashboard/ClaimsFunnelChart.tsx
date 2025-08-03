@@ -14,7 +14,9 @@ interface ClaimsFunnelChartProps {
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: Array<{
+    payload: ClaimsFunnelData;
+  }>;
   label?: string;
 }
 
