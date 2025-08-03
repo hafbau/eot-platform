@@ -50,7 +50,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             initialized: true,
           }));
         }
-      } catch (_error) {
+      } catch {
         if (mounted) {
           setState(prev => ({
             ...prev,
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         loading: false,
         error: null,
       }));
-    } catch (_error) {
+    } catch {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -159,7 +159,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         loading: false,
         error: null,
       }));
-    } catch (_error) {
+    } catch {
       setState(prev => ({
         ...prev,
         loading: false,

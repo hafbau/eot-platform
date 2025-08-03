@@ -128,7 +128,7 @@ export function isPublicRoute(pathname: string): boolean {
 // Higher-order component for route protection
 export function withAuth<T extends object>(
   Component: React.ComponentType<T>,
-  options?: {
+  _options?: {
     requiredRoles?: UserRole[];
     redirectTo?: string;
   }

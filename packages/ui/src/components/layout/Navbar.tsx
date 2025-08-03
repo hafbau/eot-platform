@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Button } from '../button';
 import { 
   Building2, 
-  User, 
+  User as UserIcon, 
   Settings, 
   LogOut, 
   Bell,
-  Search,
-  Menu
+  Search
 } from 'lucide-react';
 import { getInitials } from '../../lib/utils';
 
@@ -109,7 +108,7 @@ const Navbar = ({
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      <User className="h-4 w-4 mr-2" />
+                      <UserIcon className="h-4 w-4 mr-2" />
                       Profile
                     </LinkComponent>
                     

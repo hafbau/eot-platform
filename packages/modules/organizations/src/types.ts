@@ -1,4 +1,4 @@
-import { BaseEntity, User } from '@eot/core';
+import { BaseEntity } from '@eot/core';
 
 // Organization Types
 export interface OrganizationConfig extends BaseEntity {
