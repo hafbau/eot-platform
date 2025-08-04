@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@eot/ui';
+import { cn, Badge } from '@eot/ui';
 
 interface StatsCardProps {
   title: string;
@@ -9,6 +9,10 @@ interface StatsCardProps {
   icon?: React.ComponentType<{ className?: string }>;
   className?: string;
   subtitle?: string | null;
+  badge?: {
+    text: string;
+    variant?: 'default' | 'secondary' | 'success' | 'destructive' | 'outline';
+  };
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ 
@@ -18,7 +22,8 @@ const StatsCard: React.FC<StatsCardProps> = ({
   changeType = 'neutral', 
   icon: Icon, 
   className = '',
-  subtitle = null 
+  subtitle = null,
+  badge
 }) => {
   const getChangeColor = () => {
     switch (changeType) {
@@ -38,7 +43,14 @@ const StatsCard: React.FC<StatsCardProps> = ({
     )}>
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            {badge && (
+              <Badge variant={badge.variant || 'secondary'} className="text-xs py-0 px-2">
+                {badge.text}
+              </Badge>
+            )}
+          </div>
           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
           {subtitle && (
             <p className="text-sm text-gray-500 mt-1">{subtitle}</p>

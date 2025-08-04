@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@eot/ui';
+import { Button, Badge } from '@eot/ui';
 import { 
   Building2, 
   Plus, 
@@ -15,84 +15,34 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Brain,
+  Activity,
+  Upload,
+  FileText
 } from 'lucide-react';
-import { getProjects } from '../../../lib/api/projects';
-import { formatCurrency, formatDate, getStatusColor } from '../../../lib/utils';
-import { ProjectStatus, ContractType } from '../../../lib/types';
+import { formatCurrency, formatDate } from '../../../lib/utils';
+import { mockProjects } from '../../../lib/mock-data';
 
-interface Project {
-  id: string;
-  name: string;
-  location: string;
-  startDate: string;
-  plannedCompletion: string;
-  status: ProjectStatus;
-  contractValue: number;
-  healthScore: number;
-  totalClaims: number;
-  claimsValue: number;
-  contractType: ContractType;
-  projectManager: string;
-}
 
 const ProjectsPage = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [demoStep, setDemoStep] = useState(0);
 
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const result = await getProjects();
-        if (result.success) {
-          setProjects(result.data);
-          setFilteredProjects(result.data);
-        }
-      } catch (error) {
-        console.error('Error loading projects:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Use mock data for demo
+  const projects = mockProjects;
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = !searchTerm || 
+      project.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
-    loadProjects();
-  }, []);
-
-  useEffect(() => {
-    let filtered = projects;
-
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(project =>
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.projectManager.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Apply status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(project => project.status === statusFilter);
-    }
-
-    setFilteredProjects(filtered);
-  }, [projects, searchTerm, statusFilter]);
-
-  const getContractTypeDisplay = (type: ContractType) => {
-    const types = {
-      [ContractType.FIDIC_RED]: 'FIDIC Red',
-      [ContractType.FIDIC_YELLOW]: 'FIDIC Yellow',
-      [ContractType.FIDIC_SILVER]: 'FIDIC Silver',
-      [ContractType.NEC3]: 'NEC3',
-      [ContractType.NEC4]: 'NEC4',
-      [ContractType.CUSTOM]: 'Custom'
-    };
-    return types[type] || type;
-  };
 
   const getHealthScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600 bg-green-100';
@@ -101,25 +51,21 @@ const ProjectsPage = () => {
     return 'text-red-600 bg-red-100';
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Projects Portfolio</h1>
           <p className="mt-2 text-gray-600">
-            Manage and monitor all your construction projects
+            AI-powered monitoring across {projects.length} active construction projects
           </p>
         </div>
-        <Button>
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setShowProjectModal(true)}
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
@@ -150,10 +96,10 @@ const ProjectsPage = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
-              <option value={ProjectStatus.ACTIVE}>Active</option>
-              <option value={ProjectStatus.PLANNING}>Planning</option>
-              <option value={ProjectStatus.ON_HOLD}>On Hold</option>
-              <option value={ProjectStatus.COMPLETED}>Completed</option>
+              <option value="active">Active</option>
+              <option value="planning">Planning</option>
+              <option value="on_hold">On Hold</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
 
@@ -170,80 +116,130 @@ const ProjectsPage = () => {
           <div key={project.id} className="bg-white rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow">
             {/* Project Header */}
             <div className="p-6 pb-4">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     {project.name}
                   </h3>
-                  <div className="flex items-center text-sm text-gray-600 mb-2">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {project.location}
+                </div>
+                <div className="flex items-center space-x-2">
+                  {project.criticalPathImpact && (
+                    <Badge variant="destructive" className="text-xs">
+                      <AlertTriangle className="h-3 w-3 mr-1" />
+                      Critical
+                    </Badge>
+                  )}
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                    {project.status}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">
+                  {project.contractType} • ${(project.contractValue / 1000000).toFixed(0)}M
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <span className="flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {project.plannedDuration} months
+                    </span>
+                    <span className="flex items-center">
+                      <Activity className="h-3 w-3 mr-1" />
+                      {project.totalActivities} activities
+                    </span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(project.startDate)} - {formatDate(project.plannedCompletion)}
+                </div>
+              </div>
+            </div>
+
+            {/* Project Metrics */}
+            <div className="px-6 pb-4 space-y-3">
+              {/* Progress Bar */}
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-gray-600">Progress</span>
+                  <span className="font-medium">{project.actualProgress.toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full relative"
+                    style={{ width: `${project.actualProgress}%` }}
+                  >
+                    <div 
+                      className="absolute top-0 h-2 w-0.5 bg-green-600"
+                      style={{ left: `${(project.plannedProgress / project.actualProgress) * 100}%` }}
+                      title={`Planned: ${project.plannedProgress.toFixed(1)}%`}
+                    />
+                  </div>
+                </div>
+                {project.actualProgress < project.plannedProgress && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {(project.plannedProgress - project.actualProgress).toFixed(1)}% behind schedule
+                  </p>
+                )}
+              </div>
+              
+              {/* Key Metrics */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-600">Health Score</p>
+                      <p className="text-lg font-bold text-gray-900">{project.healthScore}</p>
+                    </div>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      project.healthScore >= 80 ? 'bg-green-100' : 
+                      project.healthScore >= 60 ? 'bg-yellow-100' : 'bg-red-100'
+                    }`}>
+                      <Activity className={`h-4 w-4 ${
+                        project.healthScore >= 80 ? 'text-green-600' : 
+                        project.healthScore >= 60 ? 'text-yellow-600' : 'text-red-600'
+                      }`} />
+                    </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(project.status)}`}>
-                    {project.status.replace('_', ' ')}
-                  </span>
-                  <Button variant="ghost" size="sm">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-600">Open Claims</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {project.openClaims}
+                      <span className="text-xs font-normal text-gray-600 ml-1">
+                        (${(project.claimsValue / 1000000).toFixed(1)}M)
+                      </span>
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Project Stats */}
-            <div className="px-6 pb-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-600">Contract Value</p>
-                  <p className="font-semibold text-gray-900">
-                    {formatCurrency(project.contractValue)}
-                  </p>
+              
+              {/* AI Insights */}
+              {project.potentialDelays > 0 && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-purple-600" />
+                    <p className="text-xs font-medium text-purple-900">
+                      AI detected {project.potentialDelays} potential delays
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-600">Health Score</p>
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getHealthScoreColor(project.healthScore)}`}>
-                    {project.healthScore}/100
-                  </span>
-                </div>
-                <div>
-                  <p className="text-gray-600">Active Claims</p>
-                  <p className="font-semibold text-gray-900">
-                    {project.totalClaims} ({formatCurrency(project.claimsValue)})
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Contract Type</p>
-                  <p className="font-semibold text-gray-900">
-                    {getContractTypeDisplay(project.contractType)}
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Project Actions */}
-            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+            <div className="px-6 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600">
-                  PM: {project.projectManager}
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <Clock className="h-3 w-3" />
+                  Updated {project.lastScheduleUpdate}
                 </div>
-                <div className="flex space-x-2">
-                  <Link href={`/projects/${project.id}/dashboard`}>
-                    <Button size="sm" variant="outline">
-                      <Eye className="mr-1 h-3 w-3" />
-                      View
-                    </Button>
-                  </Link>
-                  <Button size="sm">
-                    <Edit className="mr-1 h-3 w-3" />
-                    Edit
+                <Link href={`/projects/${project.id}/dashboard`}>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Eye className="mr-1 h-3 w-3" />
+                    View Project
                   </Button>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -272,34 +268,117 @@ const ProjectsPage = () => {
         </div>
       )}
 
-      {/* Summary Stats */}
-      {filteredProjects.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Portfolio Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredProjects.length}
-              </p>
-              <p className="text-sm text-gray-600">Total Projects</p>
+      {/* Project Creation Modal (Demo) */}
+      {showProjectModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Create New Project</h2>
+              <p className="text-sm text-gray-600 mt-1">Set up a new construction project with AI-powered insights</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
-                {formatCurrency(filteredProjects.reduce((sum, p) => sum + p.contractValue, 0))}
-              </p>
-              <p className="text-sm text-gray-600">Total Contract Value</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredProjects.reduce((sum, p) => sum + p.totalClaims, 0)}
-              </p>
-              <p className="text-sm text-gray-600">Active Claims</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
-                {Math.round(filteredProjects.reduce((sum, p) => sum + p.healthScore, 0) / filteredProjects.length)}
-              </p>
-              <p className="text-sm text-gray-600">Avg Health Score</p>
+            
+            {demoStep === 0 && (
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    placeholder="e.g., Dubai Marina Tower Complex"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Contract Value</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      placeholder="$450,000,000"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Contract Type</label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                      <option>FIDIC Yellow Book</option>
+                      <option>FIDIC Red Book</option>
+                      <option>NEC4 Option C</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <p className="mt-2 text-sm font-medium text-gray-900">Upload Contract PDF</p>
+                  <p className="text-xs text-gray-500 mt-1">AI will extract clauses and notice periods</p>
+                  <Button size="sm" variant="outline" className="mt-4">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Select File
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {demoStep === 1 && (
+              <div className="p-6">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin">
+                      <Brain className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-purple-900">AI is analyzing your contract...</p>
+                      <p className="text-sm text-purple-700 mt-1">Extracting clauses, notice periods, and key terms</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Detected FIDIC Yellow Book 2017 Edition</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Found 47 relevant contract clauses</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Identified 28-day notice period for claims</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="animate-spin">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <span className="text-gray-600">Setting up automated monitoring...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="p-6 border-t border-gray-200 flex justify-between">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowProjectModal(false);
+                  setDemoStep(0);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => {
+                  if (demoStep === 0) {
+                    setDemoStep(1);
+                    setTimeout(() => {
+                      setShowProjectModal(false);
+                      setDemoStep(0);
+                    }, 3000);
+                  }
+                }}
+              >
+                {demoStep === 0 ? 'Create Project' : 'Processing...'}
+              </Button>
             </div>
           </div>
         </div>
