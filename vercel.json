@@ -86,16 +86,11 @@
       "destination": "/api/auth/:path*"
     },
     {
-      "source": "/api/supabase/:path*",
-      "destination": "https://*.supabase.co/:path*"
-    },
-    {
       "source": "/health",
       "destination": "/api/health"
     }
   ],
   "cleanUrls": true,
   "trailingSlash": false,
-  "ignoreBuildOutputFromApiRoutes": true,
   "crons": []
 }
