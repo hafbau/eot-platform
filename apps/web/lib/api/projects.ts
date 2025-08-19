@@ -159,7 +159,7 @@ export const getProjectEvidence = async (projectId) => {
 };
 
 // Import project schedule
-export const importSchedule = async (projectId, scheduleData) => {
+export const importSchedule = async (projectId) => {
   await delay(2000); // Simulate longer processing time
   
   const project = mockProjects.find(p => p.id === projectId);

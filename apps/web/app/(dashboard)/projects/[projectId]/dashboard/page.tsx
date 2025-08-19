@@ -11,7 +11,6 @@ import {
   FileText, 
   Gavel,
   TrendingUp,
-  DollarSign,
   Clock,
   CheckCircle
 } from 'lucide-react';

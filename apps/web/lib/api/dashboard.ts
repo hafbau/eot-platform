@@ -36,7 +36,7 @@ export const getClaimsFunnel = async () => {
 };
 
 // Get delay trend data
-export const getDelayTrend = async (period = '6months') => {
+export const getDelayTrend = async () => {
   await delay(600); // Simulate API call delay
   
   // In a real app, this would filter based on the period parameter

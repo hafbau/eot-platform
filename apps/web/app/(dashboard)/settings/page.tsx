@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@eot/ui';
-import { User, Mail, Shield, Key, Save, Loader2 } from 'lucide-react';
+import { User, Shield, Key, Save, Loader2 } from 'lucide-react';
 import { getCurrentUser, updateProfile, changePassword } from '../../../lib/api/auth';
 import { UserRole } from '../../../lib/types';
 
@@ -84,7 +84,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error || 'An error occurred');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update profile. Please try again.');
     } finally {
       setIsLoading(false);
@@ -116,7 +116,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error || 'An error occurred');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to change password. Please try again.');
     } finally {
       setIsLoading(false);

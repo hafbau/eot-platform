@@ -1,15 +1,17 @@
 import { supabase, createSupabaseBrowserClient } from './supabase';
+import type { User } from '@supabase/supabase-js';
 import type { 
   AuthenticationResult, 
   AuthenticatedUser, 
   SignInCredentials, 
   SignUpCredentials, 
-  UserMetadata 
+  UserMetadata,
+  SupabaseUserProfile
 } from './auth-types';
 import { UserRole } from './auth-types';
 
 // Helper function to transform Supabase user to our AuthenticatedUser format
-const transformUser = async (user: unknown, profile?: unknown): Promise<AuthenticatedUser | null> => {
+const transformUser = async (user: User | null, profile?: SupabaseUserProfile | null): Promise<AuthenticatedUser | null> => {
   if (!user) return null;
 
   let userProfile = profile;
@@ -26,9 +28,9 @@ const transformUser = async (user: unknown, profile?: unknown): Promise<Authenti
 
   return {
     id: user.id,
-    email: user.email,
+    email: user.email || '',
     name: userProfile?.name || user.user_metadata?.name || '',
-    role: userProfile?.role || user.user_metadata?.role || UserRole.SCHEDULER,
+    role: (userProfile?.role || user.user_metadata?.role || UserRole.SCHEDULER) as UserRole,
     avatar: userProfile?.avatar_url || user.user_metadata?.avatar_url || null,
     organizationId: userProfile?.organization_id || user.user_metadata?.organization_id,
     createdAt: new Date(user.created_at),

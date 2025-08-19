@@ -1,7 +1,7 @@
 // Mock Authentication API
 // This file contains mock authentication functions that can be easily replaced with real API calls
 
-import { mockUsers, mockCurrentUser } from './mockData';
+import { mockUsers } from './mockData';
 
 // Simulate API delay
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -160,7 +160,7 @@ export const updateProfile = async (userData) => {
 };
 
 // Change password
-export const changePassword = async (currentPassword, newPassword) => {
+export const changePassword = async (currentPassword) => {
   await delay(800); // Simulate API call delay
   
   if (!isAuthenticated || !currentUser) {

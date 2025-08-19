@@ -5,6 +5,8 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "../lib/utils"
 
+interface SliderProps extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {}
+
 function Slider({
   className,
   defaultValue,
@@ -12,7 +14,7 @@ function Slider({
   min = 0,
   max = 100,
   ...props
-}) {
+}: SliderProps) {
   const _values = React.useMemo(() =>
     Array.isArray(value)
       ? value

@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
 import React, { useEffect, useState } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import { Layout } from '@eot/ui';
@@ -56,7 +55,10 @@ export default function DashboardLayout({
     <Layout
       currentPath={pathname}
       projectId={params?.projectId as string}
-      currentUser={currentUser}
+      currentUser={{
+        name: currentUser?.name || 'Hafiz Suara',
+        email: currentUser?.email || 'hafiz@eotintel.ai',
+      }}
       onLogout={handleLogout}
       onNavigate={handleNavigate}
       LinkComponent={LinkComponent}

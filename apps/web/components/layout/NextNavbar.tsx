@@ -11,7 +11,6 @@ import {
   LogOut, 
   Bell,
   Search,
-  Menu
 } from 'lucide-react';
 import { getCurrentUser, logout } from '../../lib/api/auth';
 import { getInitials } from '@eot/ui';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, AlertTriangle, CheckCircle, Calendar } from 'lucide-react';
-import { formatDate, daysBetween } from '../../lib/utils';
+import { formatDate } from '../../lib/utils';
 
 interface Deadline {
   id: string;

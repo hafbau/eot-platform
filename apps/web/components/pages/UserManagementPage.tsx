@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@eot/ui';
 import { 
   Users, 
-  Plus, 
   Search, 
   Edit, 
   Trash2, 
@@ -11,16 +10,15 @@ import {
   Mail,
   Calendar
 } from 'lucide-react';
-import { mockUsers } from '../lib/api/mockData';
-import { formatDate, getInitials, getStatusColor } from '../lib/utils';
-import { UserRole } from '../lib/types';
+import { mockUsers } from '../../lib/api/mockData';
+import { formatDate, getInitials } from '../../lib/utils';
+import { UserRole } from '../../lib/types';
 
 const UserManagementPage = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [showActionsMenu, setShowActionsMenu] = useState(null);
 
   useEffect(() => {
@@ -196,7 +194,6 @@ const UserManagementPage = () => {
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                           <button
                             onClick={() => {
-                              setSelectedUser(user);
                               setShowActionsMenu(null);
                             }}
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"

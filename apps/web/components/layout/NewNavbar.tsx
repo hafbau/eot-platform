@@ -11,7 +11,6 @@ import {
   LogOut, 
   Bell,
   Search,
-  Menu
 } from 'lucide-react';
 import { useAuth } from '@eot/identity';
 
