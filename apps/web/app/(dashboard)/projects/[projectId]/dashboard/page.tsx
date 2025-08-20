@@ -50,7 +50,8 @@ interface ClaimItem {
   referenceNumber: string;
   title: string;
   claimAmount: number;
-  submissionDate?: string;
+  // Can be string when submitted, null when still draft (matches API mock data)
+  submissionDate?: string | null;
 }
 
 interface ProjectData {

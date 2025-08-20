@@ -9,7 +9,7 @@ import { UserRole } from '../../../lib/types';
 interface ProfileData {
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 
 interface PasswordData {
@@ -28,7 +28,7 @@ const SettingsPage = () => {
   const [profileData, setProfileData] = useState<ProfileData>({
     name: '',
     email: '',
-    role: ''
+    role: UserRole.SCHEDULER
   });
   
   // Password form state
@@ -50,10 +50,11 @@ const SettingsPage = () => {
   }, []);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setProfileData({
-      ...profileData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: name === 'role' ? (value as UserRole) : value
+    }));
     if (message || error) {
       setMessage('');
       setError('');

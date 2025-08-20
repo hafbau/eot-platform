@@ -6,9 +6,9 @@ import { MinusIcon } from "lucide-react"
 
 import { cn } from "../lib/utils"
 
-interface InputOTPProps extends React.ComponentPropsWithoutRef<typeof OTPInput> {
+type InputOTPProps = React.ComponentPropsWithoutRef<typeof OTPInput> & {
   containerClassName?: string
-}
+};
 
 function InputOTP({
   className,
@@ -24,7 +24,7 @@ function InputOTP({
   );
 }
 
-interface InputOTPGroupProps extends React.HTMLAttributes<HTMLDivElement> {}
+type InputOTPGroupProps = React.HTMLAttributes<HTMLDivElement>;
 
 function InputOTPGroup({
   className,
@@ -70,7 +70,7 @@ function InputOTPSlot({
   );
 }
 
-interface InputOTPSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
+type InputOTPSeparatorProps = React.HTMLAttributes<HTMLDivElement>;
 
 function InputOTPSeparator({
   ...props

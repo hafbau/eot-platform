@@ -11,7 +11,7 @@ interface StatsCardProps {
   subtitle?: string | null;
   badge?: {
     text: string;
-    variant?: 'default' | 'secondary' | 'success' | 'destructive' | 'outline';
+    variant?: 'default' | 'secondary' | 'destructive' | 'outline';
   };
 }
 

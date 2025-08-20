@@ -20,7 +20,8 @@ const NextNavbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  // Allow mock auth user shape which may omit updatedAt
+  const [currentUser, setCurrentUser] = useState<(Partial<UserType> & { id: string; name: string; email: string }) | null>(null);
   
   useEffect(() => {
     // Only check user authentication after component mounts (client-side)

@@ -1,8 +1,15 @@
 "use client";
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
-import type { Payload } from "recharts/types/component/DefaultLegendContent"
-import type { TooltipProps } from "recharts"
+// Minimal tooltip payload typing (avoid internal Recharts types that may change)
+interface ChartTooltipItem {
+  dataKey?: string | number;
+  name?: string | number;
+  value?: number | string;
+  color?: string;
+  payload: Record<string, unknown> & { fill?: string; [k: string]: unknown };
+}
+type ChartTooltipPayload = ChartTooltipItem[];
 
 import { cn } from "../lib/utils"
 
@@ -20,6 +27,8 @@ export interface ChartConfig {
     theme?: {
       light?: string
       dark?: string
+      // allow arbitrary theme keys for future expansion
+      [k: string]: string | undefined
     }
   }
 }
@@ -67,7 +76,7 @@ function ChartContainer({
         {...props}>
         <ChartStyle id={chartId} config={config} />
         <RechartsPrimitive.ResponsiveContainer>
-          {children}
+          {children as unknown as React.ReactElement}
         </RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
@@ -114,14 +123,14 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 
 interface ChartTooltipContentProps extends React.HTMLAttributes<HTMLDivElement> {
   active?: boolean
-  payload?: TooltipProps<any, any>["payload"]
+  payload?: ChartTooltipPayload
   indicator?: "dot" | "line" | "dashed"
   hideLabel?: boolean
   hideIndicator?: boolean
   label?: React.ReactNode
-  labelFormatter?: (value: any, payload: any) => React.ReactNode
+  labelFormatter?: (value: unknown, payload: ChartTooltipPayload | undefined) => React.ReactNode
   labelClassName?: string
-  formatter?: (value: any, name: any, item: any, index: number, payload: any) => React.ReactNode
+  formatter?: (value: unknown, name: unknown, item: ChartTooltipItem, index: number, payload: Record<string, unknown>) => React.ReactNode
   color?: string
   nameKey?: string
   labelKey?: string
@@ -194,7 +203,7 @@ function ChartTooltipContent({
       )}>
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload.map((item, index) => {
+  {payload.map((item: ChartTooltipItem, index: number) => {
           const key = `${nameKey || item.name || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
           const indicatorColor = color || item.payload.fill || item.color
@@ -261,7 +270,8 @@ const ChartLegend = RechartsPrimitive.Legend
 
 interface ChartLegendContentProps extends React.HTMLAttributes<HTMLDivElement> {
   hideIcon?: boolean
-  payload?: Payload[]
+  // Legend payload simplified typing
+  payload?: Array<ChartTooltipItem>
   verticalAlign?: "top" | "bottom"
   nameKey?: string
 }
@@ -316,7 +326,7 @@ function ChartLegendContent({
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: any,
+  payload: unknown,
   key: string
 ): ChartConfig[string] | undefined {
   if (typeof payload !== "object" || payload === null) {
@@ -332,17 +342,12 @@ function getPayloadConfigFromPayload(
 
   let configLabelKey = key
 
-  if (
-    key in payload &&
-    typeof payload[key] === "string"
-  ) {
-    configLabelKey = payload[key]
-  } else if (
-    payloadPayload &&
-    key in payloadPayload &&
-    typeof payloadPayload[key] === "string"
-  ) {
-    configLabelKey = payloadPayload[key]
+  const payloadObj = payload as Record<string, unknown> | undefined;
+  const payloadPayloadObj = payloadPayload as Record<string, unknown> | undefined;
+  if (payloadObj && typeof payloadObj[key] === 'string') {
+    configLabelKey = payloadObj[key] as string;
+  } else if (payloadPayloadObj && typeof payloadPayloadObj[key] === 'string') {
+    configLabelKey = payloadPayloadObj[key] as string;
   }
 
   return configLabelKey in config

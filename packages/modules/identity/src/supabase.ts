@@ -131,6 +131,8 @@ export const authConfig = {
 
 function getRedirectUrl(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  // Widen NODE_ENV typing to allow custom extensions like 'staging' without TS union mismatch
+  const nodeEnv = (process.env.NODE_ENV ?? 'development') as string;
   
   // Vercel deployment URLs
   if (process.env.VERCEL_URL) {
@@ -142,8 +144,8 @@ function getRedirectUrl(): string {
     return `${siteUrl}/auth/callback`;
   }
   
-  // Environment-specific defaults
-  switch (process.env.NODE_ENV) {
+  // Environment-specific defaults (supports custom staging env)
+  switch (nodeEnv) {
     case 'production':
       return 'https://eot-intelligence.com/auth/callback';
     case 'staging':
@@ -155,13 +157,14 @@ function getRedirectUrl(): string {
 
 // Configuration for different environments
 export const getEnvironmentConfig = () => {
-  const env = process.env.NODE_ENV || 'development';
+  // Treat NODE_ENV as loose string to allow custom values like 'staging'
+  const env = (process.env.NODE_ENV || 'development') as string;
   const vercelEnv = process.env.VERCEL_ENV;
   
   return {
     environment: vercelEnv || env,
     isDevelopment: env === 'development',
-    isStaging: vercelEnv === 'preview' || env === 'staging',
+  isStaging: vercelEnv === 'preview' || env === 'staging',
     isProduction: vercelEnv === 'production' || env === 'production',
     supabaseUrl,
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',

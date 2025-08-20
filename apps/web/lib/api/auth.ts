@@ -2,16 +2,27 @@
 // This file contains mock authentication functions that can be easily replaced with real API calls
 
 import { mockUsers } from './mockData';
+import { UserRole } from '../../lib/types';
+
+interface MockUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar: null;
+  createdAt: string;
+  lastLogin: string;
+}
 
 // Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 // Mock authentication state
 let isAuthenticated = false;
-let currentUser = null;
+let currentUser: MockUser | null = null;
 
 // Login function
-export const login = async (email, password) => {
+export const login = async (email: string, password: string) => {
   await delay(1000); // Simulate API call delay
   
   // Mock validation - in real app, this would be handled by backend
@@ -42,7 +53,7 @@ export const login = async (email, password) => {
 };
 
 // Register function
-export const register = async (userData) => {
+export const register = async (userData: { name: string; email: string; role?: string; password?: string }) => {
   await delay(1000); // Simulate API call delay
   
   // Check if user already exists
@@ -59,7 +70,7 @@ export const register = async (userData) => {
     id: Date.now().toString(),
     name: userData.name,
     email: userData.email,
-    role: userData.role || 'scheduler',
+  role: (userData.role as UserRole) || UserRole.SCHEDULER,
     avatar: null,
     createdAt: new Date().toISOString(),
     lastLogin: new Date().toISOString()
@@ -115,7 +126,7 @@ export const getCurrentUser = () => {
     currentUser = JSON.parse(storedUser);
     
     // Ensure auth cookie is set (for page refreshes)
-    document.cookie = `auth-token=mock-jwt-token-${currentUser.id}; path=/; max-age=86400`;
+  document.cookie = `auth-token=mock-jwt-token-${currentUser!.id}; path=/; max-age=86400`;
     
     return currentUser;
   }
@@ -130,7 +141,7 @@ export const isUserAuthenticated = () => {
 };
 
 // Update user profile
-export const updateProfile = async (userData) => {
+export const updateProfile = async (userData: Partial<Pick<MockUser, 'name' | 'email' | 'role'>>) => {
   await delay(800); // Simulate API call delay
   
   if (!isAuthenticated || !currentUser) {
@@ -141,16 +152,18 @@ export const updateProfile = async (userData) => {
   }
   
   // Update current user
-  const updatedUser = { ...currentUser, ...userData };
+  const updatedUser: MockUser = { ...currentUser, ...userData, role: (userData.role as UserRole) || currentUser.role } as MockUser;
   currentUser = updatedUser;
   
   // Update in localStorage
   localStorage.setItem('currentUser', JSON.stringify(updatedUser));
   
   // Update in mock users array
-  const userIndex = mockUsers.findIndex(u => u.id === currentUser.id);
-  if (userIndex !== -1) {
-    mockUsers[userIndex] = updatedUser;
+  if (currentUser) {
+    const userIndex = mockUsers.findIndex(u => u.id === currentUser!.id);
+    if (userIndex !== -1) {
+  mockUsers[userIndex] = { ...updatedUser, role: (updatedUser.role as UserRole) };
+    }
   }
   
   return {
@@ -159,8 +172,8 @@ export const updateProfile = async (userData) => {
   };
 };
 
-// Change password
-export const changePassword = async (currentPassword) => {
+// Change password - accepts current and new password (newPassword currently unused in mock)
+export const changePassword = async (currentPassword: string, newPassword?: string) => {
   await delay(800); // Simulate API call delay
   
   if (!isAuthenticated || !currentUser) {
@@ -178,10 +191,14 @@ export const changePassword = async (currentPassword) => {
     };
   }
   
-  // In a real app, the password would be hashed and stored
-  return {
-    success: true,
-    message: 'Password changed successfully'
-  };
+  // In a real app, validate newPassword strength & update persistence layer
+  if (!newPassword || newPassword.length < 6) {
+    return {
+      success: false,
+      error: 'New password must be at least 6 characters'
+    };
+  }
+
+  return { success: true, message: 'Password changed successfully' };
 };
 

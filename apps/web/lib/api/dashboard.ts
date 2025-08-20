@@ -13,7 +13,7 @@ import {
 } from './mockData';
 
 // Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 // Get dashboard overview statistics
 export const getDashboardStats = async () => {
@@ -59,7 +59,13 @@ export const getUpcomingDeadlines = async (limit = 10) => {
 };
 
 // Get action items
-export const getActionItems = async (filters = {}) => {
+interface ActionItemFilters {
+  status?: string;
+  assignee?: string;
+  priority?: string;
+}
+
+export const getActionItems = async (filters: ActionItemFilters = {}) => {
   await delay(500); // Simulate API call delay
   
   let filteredItems = [...mockActionItems];
@@ -147,7 +153,10 @@ export const getPortfolioOverview = async () => {
 };
 
 // Update action item
-export const updateActionItem = async (itemId, updates) => {
+export const updateActionItem = async (
+  itemId: string,
+  updates: Partial<{ title: string; description?: string; priority: string; status: string; assignee?: string; dueDate?: string; }>
+) => {
   await delay(400); // Simulate API call delay
   
   const itemIndex = mockActionItems.findIndex(item => item.id === itemId);
@@ -159,7 +168,7 @@ export const updateActionItem = async (itemId, updates) => {
     };
   }
   
-  mockActionItems[itemIndex] = { ...mockActionItems[itemIndex], ...updates };
+  mockActionItems[itemIndex] = { ...mockActionItems[itemIndex], ...updates } as typeof mockActionItems[number];
   
   return {
     success: true,
@@ -168,17 +177,18 @@ export const updateActionItem = async (itemId, updates) => {
 };
 
 // Create new action item
-export const createActionItem = async (itemData) => {
+export const createActionItem = async (itemData: { title: string; description?: string; priority: string; assignee?: string; dueDate?: string }) => {
   await delay(500); // Simulate API call delay
   
   const newItem = {
     id: Date.now().toString(),
+    projectId: '1', // default mock project ID
     ...itemData,
     status: 'pending',
     createdAt: new Date().toISOString()
   };
   
-  mockActionItems.push(newItem);
+  mockActionItems.push(newItem as typeof mockActionItems[number]);
   
   return {
     success: true,
@@ -187,7 +197,7 @@ export const createActionItem = async (itemData) => {
 };
 
 // Delete action item
-export const deleteActionItem = async (itemId) => {
+export const deleteActionItem = async (itemId: string) => {
   await delay(300); // Simulate API call delay
   
   const itemIndex = mockActionItems.findIndex(item => item.id === itemId);

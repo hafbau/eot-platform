@@ -59,11 +59,12 @@ const DashboardPage = () => {
     .slice(0, 5)
     .map(claim => ({
       id: claim.id,
-      title: claim.title,
-      daysUntilDeadline: claim.daysUntilDeadline,
+      projectName: mockProjects.find(p => p.id === claim.projectId)?.name || '',
+      claimReference: claim.claimNumber,
       type: 'claim' as const,
-      priority: claim.daysUntilDeadline <= 7 ? 'high' : 'medium' as 'high' | 'medium',
-      project: mockProjects.find(p => p.id === claim.projectId)?.name || ''
+      priority: (claim.daysUntilDeadline <= 7 ? 'high' : 'medium') as 'high' | 'medium',
+      dueDate: claim.responseDeadline,
+      daysRemaining: claim.daysUntilDeadline
     }));
 
   const actionItems = [
@@ -131,7 +132,7 @@ const DashboardPage = () => {
           icon={DollarSign}
           change={`${formatPercentage((stats?.successRate || 0) / 100)} success rate`}
           changeType="positive"
-          badge={{ text: 'AI-Optimized', variant: 'success' }}
+          badge={{ text: 'AI-Optimized', variant: 'secondary' }}
         />
         <StatsCard
           title="Delay Alerts"

@@ -4,10 +4,11 @@
 import { mockProjects, mockDelayEvents, mockClaims, mockEvidence } from './mockData';
 
 // Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 // Get all projects
-export const getProjects = async (filters = {}) => {
+interface ProjectFilters { status?: string; search?: string }
+export const getProjects = async (filters: ProjectFilters = {}) => {
   await delay(800); // Simulate API call delay
   
   let filteredProjects = [...mockProjects];
@@ -33,7 +34,7 @@ export const getProjects = async (filters = {}) => {
 };
 
 // Get project by ID
-export const getProject = async (projectId) => {
+export const getProject = async (projectId: string) => {
   await delay(600); // Simulate API call delay
   
   const project = mockProjects.find(p => p.id === projectId);
@@ -52,7 +53,8 @@ export const getProject = async (projectId) => {
 };
 
 // Create new project
-export const createProject = async (projectData) => {
+type MockProject = typeof mockProjects[number];
+export const createProject = async (projectData: Partial<MockProject>) => {
   await delay(1000); // Simulate API call delay
   
   const newProject = {
@@ -66,7 +68,7 @@ export const createProject = async (projectData) => {
     createdAt: new Date().toISOString()
   };
   
-  mockProjects.push(newProject);
+  mockProjects.push(newProject as MockProject);
   
   return {
     success: true,
@@ -75,7 +77,7 @@ export const createProject = async (projectData) => {
 };
 
 // Update project
-export const updateProject = async (projectId, projectData) => {
+export const updateProject = async (projectId: string, projectData: Partial<MockProject>) => {
   await delay(800); // Simulate API call delay
   
   const projectIndex = mockProjects.findIndex(p => p.id === projectId);
@@ -87,7 +89,7 @@ export const updateProject = async (projectId, projectData) => {
     };
   }
   
-  const updatedProject = { ...mockProjects[projectIndex], ...projectData };
+  const updatedProject = { ...mockProjects[projectIndex], ...projectData } as MockProject;
   mockProjects[projectIndex] = updatedProject;
   
   return {
@@ -97,7 +99,7 @@ export const updateProject = async (projectId, projectData) => {
 };
 
 // Delete project
-export const deleteProject = async (projectId) => {
+export const deleteProject = async (projectId: string) => {
   await delay(600); // Simulate API call delay
   
   const projectIndex = mockProjects.findIndex(p => p.id === projectId);
@@ -118,7 +120,7 @@ export const deleteProject = async (projectId) => {
 };
 
 // Get project delays
-export const getProjectDelays = async (projectId) => {
+export const getProjectDelays = async (projectId: string) => {
   await delay(600); // Simulate API call delay
   
   const delays = mockDelayEvents.filter(d => d.projectId === projectId);
@@ -130,7 +132,7 @@ export const getProjectDelays = async (projectId) => {
 };
 
 // Get project claims
-export const getProjectClaims = async (projectId) => {
+export const getProjectClaims = async (projectId: string) => {
   await delay(600); // Simulate API call delay
   
   const claims = mockClaims.filter(c => c.projectId === projectId);
@@ -142,7 +144,7 @@ export const getProjectClaims = async (projectId) => {
 };
 
 // Get project evidence
-export const getProjectEvidence = async (projectId) => {
+export const getProjectEvidence = async (projectId: string) => {
   await delay(600); // Simulate API call delay
   
   // Get all delay events for the project
@@ -159,7 +161,7 @@ export const getProjectEvidence = async (projectId) => {
 };
 
 // Import project schedule
-export const importSchedule = async (projectId) => {
+export const importSchedule = async (projectId: string) => {
   await delay(2000); // Simulate longer processing time
   
   const project = mockProjects.find(p => p.id === projectId);
@@ -184,7 +186,7 @@ export const importSchedule = async (projectId) => {
 };
 
 // Get project dashboard data
-export const getProjectDashboard = async (projectId) => {
+export const getProjectDashboard = async (projectId: string) => {
   await delay(800); // Simulate API call delay
   
   const project = mockProjects.find(p => p.id === projectId);
