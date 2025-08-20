@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Vercel deployment optimization
+  // Vercel deployment optimization  
   output: 'standalone',
   
   // Turborepo monorepo packages
