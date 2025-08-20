@@ -10,9 +10,6 @@ import {
   Download, 
   Calendar, 
   Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
   BarChart3
 } from 'lucide-react';
 

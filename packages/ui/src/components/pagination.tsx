@@ -11,7 +11,7 @@ import { buttonVariants } from "./button";
 function Pagination({
   className,
   ...props
-}) {
+}: React.HTMLAttributes<HTMLElement>) {
   return (
     <nav
       role="navigation"
@@ -25,7 +25,7 @@ function Pagination({
 function PaginationContent({
   className,
   ...props
-}) {
+}: React.HTMLAttributes<HTMLUListElement>) {
   return (
     <ul
       data-slot="pagination-content"
@@ -36,16 +36,20 @@ function PaginationContent({
 
 function PaginationItem({
   ...props
-}) {
+}: React.HTMLAttributes<HTMLLIElement>) {
   return <li data-slot="pagination-item" {...props} />;
 }
 
+interface PaginationLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  isActive?: boolean;
+  size?: 'icon' | 'default' | 'sm' | 'lg';
+}
 function PaginationLink({
   className,
   isActive,
   size = "icon",
   ...props
-}) {
+}: PaginationLinkProps) {
   return (
     <a
       aria-current={isActive ? "page" : undefined}
@@ -62,7 +66,7 @@ function PaginationLink({
 function PaginationPrevious({
   className,
   ...props
-}) {
+}: Omit<PaginationLinkProps, 'size'>) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
@@ -78,7 +82,7 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   ...props
-}) {
+}: Omit<PaginationLinkProps, 'size'>) {
   return (
     <PaginationLink
       aria-label="Go to next page"
@@ -94,7 +98,7 @@ function PaginationNext({
 function PaginationEllipsis({
   className,
   ...props
-}) {
+}: React.HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
       aria-hidden

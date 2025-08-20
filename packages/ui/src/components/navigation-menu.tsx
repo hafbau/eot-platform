@@ -5,12 +5,15 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "../lib/utils"
 
+interface NavigationMenuProps extends React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root> {
+  viewport?: boolean;
+}
 function NavigationMenu({
   className,
   children,
   viewport = true,
   ...props
-}) {
+}: NavigationMenuProps) {
   return (
     <NavigationMenuPrimitive.Root
       data-slot="navigation-menu"
@@ -29,7 +32,7 @@ function NavigationMenu({
 function NavigationMenuList({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>) {
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
@@ -41,7 +44,7 @@ function NavigationMenuList({
 function NavigationMenuItem({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Item>) {
   return (
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"
@@ -58,7 +61,7 @@ function NavigationMenuTrigger({
   className,
   children,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>) {
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
@@ -75,7 +78,7 @@ function NavigationMenuTrigger({
 function NavigationMenuContent({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>) {
   return (
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
@@ -91,7 +94,7 @@ function NavigationMenuContent({
 function NavigationMenuViewport({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>) {
   return (
     <div
       className={cn("absolute top-full left-0 isolate z-50 flex justify-center")}>
@@ -109,7 +112,7 @@ function NavigationMenuViewport({
 function NavigationMenuLink({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Link>) {
   return (
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
@@ -124,7 +127,7 @@ function NavigationMenuLink({
 function NavigationMenuIndicator({
   className,
   ...props
-}) {
+}: React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>) {
   return (
     <NavigationMenuPrimitive.Indicator
       data-slot="navigation-menu-indicator"

@@ -8,14 +8,8 @@ import {
   Plus, 
   Search, 
   Filter, 
-  MoreVertical,
-  MapPin,
   Calendar,
-  DollarSign,
-  TrendingUp,
   Eye,
-  Edit,
-  Trash2,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -24,7 +18,6 @@ import {
   Upload,
   FileText
 } from 'lucide-react';
-import { formatCurrency, formatDate } from '../../../lib/utils';
 import { mockProjects } from '../../../lib/mock-data';
 
 
@@ -33,6 +26,7 @@ const ProjectsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Use mock data for demo
   const projects = mockProjects;
@@ -42,14 +36,6 @@ const ProjectsPage = () => {
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-
-  const getHealthScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600 bg-green-100';
-    if (score >= 70) return 'text-yellow-600 bg-yellow-100';
-    if (score >= 50) return 'text-orange-600 bg-orange-100';
-    return 'text-red-600 bg-red-100';
-  };
 
 
   return (
@@ -280,8 +266,9 @@ const ProjectsPage = () => {
             {demoStep === 0 && (
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                  <label htmlFor="project-name" className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
                   <input 
+                    id="project-name"
                     type="text" 
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="e.g., Dubai Marina Tower Complex"
@@ -289,16 +276,17 @@ const ProjectsPage = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Contract Value</label>
+                    <label htmlFor="contract-value" className="block text-sm font-medium text-gray-700 mb-1">Contract Value</label>
                     <input 
+                      id="contract-value"
                       type="text" 
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       placeholder="$450,000,000"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Contract Type</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <label htmlFor="contract-type" className="block text-sm font-medium text-gray-700 mb-1">Contract Type</label>
+                    <select id="contract-type" className="w-full px-3 py-2 border border-gray-300 rounded-lg">
                       <option>FIDIC Yellow Book</option>
                       <option>FIDIC Red Book</option>
                       <option>NEC4 Option C</option>

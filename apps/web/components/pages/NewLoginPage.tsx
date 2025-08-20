@@ -44,7 +44,7 @@ const LoginPage = () => {
       } else {
         setError(result.error || 'Invalid email or password');
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -175,7 +175,7 @@ const LoginPage = () => {
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
                 Sign up
               </Link>

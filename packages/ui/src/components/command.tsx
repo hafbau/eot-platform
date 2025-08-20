@@ -13,10 +13,12 @@ import {
   DialogTitle,
 } from "./dialog"
 
+type CommandProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive>
+
 function Command({
   className,
   ...props
-}) {
+}: CommandProps) {
   return (
     <CommandPrimitive
       data-slot="command"
@@ -28,12 +30,17 @@ function Command({
   );
 }
 
+interface CommandDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  title?: string
+  description?: string
+}
+
 function CommandDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
   children,
   ...props
-}) {
+}: CommandDialogProps) {
   return (
     <Dialog {...props}>
       <DialogHeader className="sr-only">
@@ -50,10 +57,12 @@ function CommandDialog({
   );
 }
 
+type CommandInputProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
+
 function CommandInput({
   className,
   ...props
-}) {
+}: CommandInputProps) {
   return (
     <div
       data-slot="command-input-wrapper"
@@ -70,10 +79,12 @@ function CommandInput({
   );
 }
 
+type CommandListProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
+
 function CommandList({
   className,
   ...props
-}) {
+}: CommandListProps) {
   return (
     <CommandPrimitive.List
       data-slot="command-list"
@@ -82,16 +93,20 @@ function CommandList({
   );
 }
 
+type CommandEmptyProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
+
 function CommandEmpty({
   ...props
-}) {
+}: CommandEmptyProps) {
   return (<CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />);
 }
+
+type CommandGroupProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
 
 function CommandGroup({
   className,
   ...props
-}) {
+}: CommandGroupProps) {
   return (
     <CommandPrimitive.Group
       data-slot="command-group"
@@ -103,10 +118,12 @@ function CommandGroup({
   );
 }
 
+type CommandSeparatorProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
+
 function CommandSeparator({
   className,
   ...props
-}) {
+}: CommandSeparatorProps) {
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
@@ -115,10 +132,12 @@ function CommandSeparator({
   );
 }
 
+type CommandItemProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
+
 function CommandItem({
   className,
   ...props
-}) {
+}: CommandItemProps) {
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
@@ -130,10 +149,12 @@ function CommandItem({
   );
 }
 
+interface CommandShortcutProps extends React.HTMLAttributes<HTMLSpanElement> {}
+
 function CommandShortcut({
   className,
   ...props
-}) {
+}: CommandShortcutProps) {
   return (
     <span
       data-slot="command-shortcut"

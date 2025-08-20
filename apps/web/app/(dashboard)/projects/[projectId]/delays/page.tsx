@@ -9,7 +9,6 @@ import {
   AlertTriangle, 
   Brain, 
   Clock, 
-  DollarSign,
   FileText,
   Mail,
   Camera,
@@ -17,8 +16,6 @@ import {
   CheckCircle,
   XCircle,
   Info,
-  TrendingUp,
-  Calendar,
   Activity,
   CloudRain,
   Construction,
@@ -26,7 +23,7 @@ import {
   Users
 } from 'lucide-react';
 import { mockDelayAlerts, mockProjects, mockAIAnalysis } from '../../../../../lib/mock-data';
-import { formatCurrency, formatNumber } from '../../../../../lib/utils';
+import { formatNumber } from '../../../../../lib/utils';
 
 const DelaysPage = () => {
   const params = useParams();
@@ -120,6 +117,16 @@ const DelaysPage = () => {
               <div 
                 className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => setSelectedDelay(isSelected ? null : delay.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedDelay(isSelected ? null : delay.id);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isSelected}
+                aria-controls={`delay-details-${delay.id}`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

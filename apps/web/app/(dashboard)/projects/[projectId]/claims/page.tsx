@@ -12,26 +12,20 @@ import {
   FileText,
   Clock,
   DollarSign,
-  Calendar,
   ChevronRight,
   Mail,
   Camera,
-  CloudRain,
-  Users,
   FileCheck,
   Download,
   Send,
   Eye,
   CheckCircle,
-  AlertTriangle,
   Activity,
-  Zap,
-  Edit,
   XCircle,
   TrendingUp
 } from 'lucide-react';
-import { mockClaims, mockProjects, mockDelayAlerts, mockEvidenceTimeline, mockAIAnalysis } from '../../../../../lib/mock-data';
-import { formatCurrency, formatDate } from '../../../../../lib/utils';
+import { mockClaims, mockProjects, mockDelayAlerts, mockEvidenceTimeline } from '../../../../../lib/mock-data';
+import { formatDate } from '../../../../../lib/utils';
 
 const ClaimsPage = () => {
   const params = useParams();
@@ -138,6 +132,16 @@ const ClaimsPage = () => {
             <div 
               className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => setSelectedClaim(selectedClaim === claim.id ? null : claim.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedClaim(selectedClaim === claim.id ? null : claim.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-expanded={selectedClaim === claim.id}
+              aria-controls={`claim-details-${claim.id}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@eot/ui';
-import { User, Mail, Shield, Key, Save, Loader2 } from 'lucide-react';
-import { getCurrentUser, updateProfile, changePassword } from '../lib/api/auth';
-import { UserRole } from '../lib/types';
+import { User, Shield, Key, Save, Loader2 } from 'lucide-react';
+import { getCurrentUser, updateProfile, changePassword } from '../../lib/api/auth';
+import { UserRole } from '../../lib/types';
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -71,7 +71,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -108,7 +108,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -117,8 +117,7 @@ const SettingsPage = () => {
 
   const tabs = [
     { id: 'profile', name: 'Profile', icon: User },
-    { id: 'security', name: 'Security', icon: Shield },
-    { id: 'notifications', name: 'Notifications', icon: Mail }
+    { id: 'security', name: 'Security', icon: Shield }
   ];
 
   return (
@@ -312,73 +311,6 @@ const SettingsPage = () => {
             </form>
           )}
 
-          {/* Notifications Tab */}
-          {activeTab === 'notifications' && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Notification Preferences
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900">Delay Alerts</h4>
-                      <p className="text-sm text-gray-500">Get notified when new delays are detected</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900">Claim Deadlines</h4>
-                      <p className="text-sm text-gray-500">Reminders for upcoming claim deadlines</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900">Weekly Reports</h4>
-                      <p className="text-sm text-gray-500">Weekly summary of project activities</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900">System Updates</h4>
-                      <p className="text-sm text-gray-500">Important system updates and maintenance</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Button>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Preferences
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

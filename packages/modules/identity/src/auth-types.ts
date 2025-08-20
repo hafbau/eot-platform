@@ -74,9 +74,9 @@ export interface AuthContextType extends AuthState {
 export interface SupabaseUserProfile {
   id: string;
   name: string;
-  role: UserRole;
-  avatar_url?: string;
-  organization_id?: string;
+  role: string;  // This comes from the database as a string
+  avatar_url?: string | null;
+  organization_id?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -6,14 +6,11 @@ import {
   Building2, 
   Gavel, 
   DollarSign, 
-  TrendingUp, 
   AlertTriangle,
   CheckCircle,
   Plus,
   ArrowRight,
-  Brain,
-  FileCheck,
-  Clock
+  Brain
 } from 'lucide-react';
 import { Button, Badge } from '@eot/ui';
 import StatsCard from '../../../components/dashboard/StatsCard';
@@ -23,42 +20,6 @@ import UpcomingDeadlines from '../../../components/dashboard/UpcomingDeadlines';
 import ActionItems from '../../../components/dashboard/ActionItems';
 import { formatCurrency, formatNumber, formatPercentage } from '../../../lib/utils';
 import { mockProjects, mockDelayAlerts, mockClaims, mockClaimsFunnel } from '../../../lib/mock-data';
-import { 
-  type DashboardStats, 
-  type ClaimsFunnelData, 
-  type DelayTrendChartData, 
-  type DeadlineFromAPI 
-} from '../../../lib/types';
-
-// Dashboard specific types for chart data
-interface DashboardDelayTrend {
-  month: string;
-  delays: number;
-  claims: number;
-}
-
-interface LocalDashboardStats {
-  activeProjects: number;
-  totalProjects: number;
-  openClaims: number;
-  claimsValue: number;
-  totalClaims: number;
-  approvedValueYTD: number;
-  approvedClaimsYTD: number;
-  successRate: number;
-  newDelayAlerts: number;
-  upcomingDeadlines: number;
-}
-
-interface ActionItem {
-  id: string;
-  title: string;
-  description?: string;
-  priority: 'high' | 'medium' | 'low';
-  status: 'pending' | 'in_progress' | 'completed';
-  assignee?: string;
-  dueDate?: string;
-}
 
 const DashboardPage = () => {
   // Calculate stats from mock data
@@ -98,11 +59,12 @@ const DashboardPage = () => {
     .slice(0, 5)
     .map(claim => ({
       id: claim.id,
-      title: claim.title,
-      daysUntilDeadline: claim.daysUntilDeadline,
+      projectName: mockProjects.find(p => p.id === claim.projectId)?.name || '',
+      claimReference: claim.claimNumber,
       type: 'claim' as const,
-      priority: claim.daysUntilDeadline <= 7 ? 'high' : 'medium' as 'high' | 'medium',
-      project: mockProjects.find(p => p.id === claim.projectId)?.name || ''
+      priority: (claim.daysUntilDeadline <= 7 ? 'high' : 'medium') as 'high' | 'medium',
+      dueDate: claim.responseDeadline,
+      daysRemaining: claim.daysUntilDeadline
     }));
 
   const actionItems = [
@@ -111,7 +73,7 @@ const DashboardPage = () => {
     { id: '3', title: 'Update P6 Schedule', description: 'Sync latest progress from site', priority: 'medium' as const, status: 'pending' as const }
   ];
 
-  const handleUpdateActionItem = (itemId: string, updates: any) => {
+  const handleUpdateActionItem = (itemId: string, updates: Partial<{ id: string; title: string; description?: string; priority: 'high' | 'medium' | 'low'; status: 'pending' | 'in_progress' | 'completed'; assignee?: string; dueDate?: string; }>) => {
     console.log('Update action item:', itemId, updates);
   };
 
@@ -170,7 +132,7 @@ const DashboardPage = () => {
           icon={DollarSign}
           change={`${formatPercentage((stats?.successRate || 0) / 100)} success rate`}
           changeType="positive"
-          badge={{ text: 'AI-Optimized', variant: 'success' }}
+          badge={{ text: 'AI-Optimized', variant: 'secondary' }}
         />
         <StatsCard
           title="Delay Alerts"

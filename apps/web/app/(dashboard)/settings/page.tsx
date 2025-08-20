@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@eot/ui';
-import { User, Mail, Shield, Key, Save, Loader2 } from 'lucide-react';
+import { User, Shield, Key, Save, Loader2 } from 'lucide-react';
 import { getCurrentUser, updateProfile, changePassword } from '../../../lib/api/auth';
 import { UserRole } from '../../../lib/types';
 
 interface ProfileData {
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 
 interface PasswordData {
@@ -28,7 +28,7 @@ const SettingsPage = () => {
   const [profileData, setProfileData] = useState<ProfileData>({
     name: '',
     email: '',
-    role: ''
+    role: UserRole.SCHEDULER
   });
   
   // Password form state
@@ -50,10 +50,11 @@ const SettingsPage = () => {
   }, []);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setProfileData({
-      ...profileData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: name === 'role' ? (value as UserRole) : value
+    }));
     if (message || error) {
       setMessage('');
       setError('');
@@ -84,7 +85,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error || 'An error occurred');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update profile. Please try again.');
     } finally {
       setIsLoading(false);
@@ -116,7 +117,7 @@ const SettingsPage = () => {
       } else {
         setError(result.error || 'An error occurred');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to change password. Please try again.');
     } finally {
       setIsLoading(false);
