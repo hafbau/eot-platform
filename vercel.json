@@ -3,7 +3,8 @@
   "version": 2,
   "buildCommand": "turbo build --filter=@eot/web",
   "installCommand": "pnpm install",
-  "framework": "nextjs",
+  "framework": null,
+  "outputDirectory": "apps/web/.next",
   "regions": ["iad1"],
   "env": {},
   "build": {
