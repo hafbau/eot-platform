@@ -2,7 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 // Mock-aware auth middleware for testing
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  try {
+    const { pathname } = request.nextUrl;
   
   // Skip middleware for static files and API routes
   if (
@@ -69,18 +70,29 @@ export async function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
+  } catch (error) {
+    // Log error and continue to prevent middleware crashes
+    console.error('Middleware error:', error);
+    return NextResponse.next();
+  }
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public files)
+     * Match specific paths that need middleware processing
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    '/',
+    '/dashboard/:path*',
+    '/projects/:path*',
+    '/claims/:path*',
+    '/delays/:path*',
+    '/evidence/:path*',
+    '/schedule/:path*',
+    '/settings/:path*',
+    '/user-management/:path*',
+    '/login',
+    '/register',
+    '/auth/:path*',
   ],
 };
