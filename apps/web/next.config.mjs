@@ -8,7 +8,7 @@ const nextConfig = {
     '@eot/ui',
     '@eot/identity',
     '@eot/organizations',
-    '@eot/storage',
+    // '@eot/storage', // Removed - not used in web app, causes __dirname issues
     '@eot/integrations',
     '@eot/analytics',
     '@eot/audit',
@@ -33,7 +33,7 @@ const nextConfig = {
       '@eot/ui',
       '@eot/identity',
       '@eot/organizations',
-      '@eot/storage',
+      // '@eot/storage', // Removed - not used in web app, causes __dirname issues
       '@eot/integrations',
       '@eot/analytics',
       '@eot/audit',
