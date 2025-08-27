@@ -7,9 +7,9 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', '@prisma/client'],
+  external: ['react', 'react-dom', '@prisma/client', './generated/client'],
   treeshake: true,
   esbuildOptions(options) {
-    options.external = [...(options.external || []), '@prisma/client'];
+    options.external = [...(options.external || []), '@prisma/client', './generated/client'];
   },
 });
