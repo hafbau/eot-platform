@@ -86,9 +86,6 @@ importers:
       '@eot/organizations':
         specifier: workspace:*
         version: link:../../packages/modules/organizations
-      '@eot/storage':
-        specifier: workspace:*
-        version: link:../../packages/modules/storage
       '@eot/ui':
         specifier: workspace:*
         version: link:../../packages/ui
