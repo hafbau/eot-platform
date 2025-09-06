@@ -164,7 +164,7 @@ export const getEnvironmentConfig = () => {
   return {
     environment: vercelEnv || env,
     isDevelopment: env === 'development',
-  isStaging: vercelEnv === 'preview' || env === 'staging',
+    isStaging: vercelEnv === 'preview' || env === 'staging',
     isProduction: vercelEnv === 'production' || env === 'production',
     supabaseUrl,
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
