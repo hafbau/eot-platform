@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@eot/ui';
-import { Building2, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '@eot/identity';
 import Link from 'next/link';
 
@@ -57,20 +57,25 @@ const LoginPage = () => {
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center">
-            <Building2 className="h-12 w-12 text-blue-600" />
+            <div className="flex items-end space-x-2" aria-label="eot—intel">
+              <span className="text-3xl font-medium tracking-tight" style={{ color: '#0066FF', letterSpacing: '-0.02em' }}>eot</span>
+              <span className="text-3xl" style={{ color: '#CCCCCC' }}>—</span>
+              <span className="text-3xl font-medium tracking-tight" style={{ color: '#1A1A1A', letterSpacing: '-0.02em' }}>intel</span>
+              <span className="text-sm align-super" style={{ color: '#999999' }}>™</span>
+            </div>
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <h2 className="mt-6 text-3xl font-bold">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm opacity-70">
             Welcome back to EOT Intelligence Platform
           </p>
         </div>
 
         {/* Demo Credentials */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials</h3>
-          <div className="text-xs text-blue-700 space-y-1">
+        <div className="rounded-lg p-4" style={{ backgroundColor: 'rgba(0,102,255,0.06)', border: '1px solid #CCE0FF' }}>
+          <h3 className="text-sm font-medium mb-2" style={{ color: '#0052CC' }}>Demo Credentials</h3>
+          <div className="text-xs space-y-1" style={{ color: '#0052CC' }}>
             <p><strong>Email:</strong> david.chen@company.com</p>
             <p><strong>Password:</strong> password123</p>
             <p className="text-xs text-blue-600 mt-2">
@@ -89,7 +94,7 @@ const LoginPage = () => {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium">
                 Email address
               </label>
               <input
@@ -100,13 +105,14 @@ const LoginPage = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
+                style={{ border: '1px solid hsl(var(--border))' }}
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium">
                 Password
               </label>
               <div className="mt-1 relative">
@@ -118,7 +124,8 @@ const LoginPage = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 pr-10 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
+                  style={{ border: '1px solid hsl(var(--border))' }}
                   placeholder="Enter your password"
                 />
                 <button
@@ -144,7 +151,7 @@ const LoginPage = () => {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="remember-me" className="ml-2 block text-sm">
                 Remember me
               </label>
             </div>
@@ -174,9 +181,9 @@ const LoginPage = () => {
           </div>
 
           <div className="text-center">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm opacity-70">
               Don&apos;t have an account?{' '}
-              <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/register" className="font-medium" style={{ color: '#0066FF' }}>
                 Sign up
               </Link>
             </span>

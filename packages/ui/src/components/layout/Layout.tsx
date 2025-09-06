@@ -35,7 +35,7 @@ const Layout = ({
   const shouldShowSidebar = showSidebar && !isAuthPage;
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'hsl(var(--background))' }}>
       <Navbar 
         currentUser={currentUser}
         isAuthPage={isAuthPage}
@@ -46,7 +46,7 @@ const Layout = ({
       
       <div className="flex">
         {shouldShowSidebar && (
-          <div className="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+          <div className="w-64 shadow-sm border-r min-h-screen" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
             <Sidebar 
               currentPath={currentPath}
               projectId={projectId}

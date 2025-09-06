@@ -3,57 +3,60 @@
 /* Base styles */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Brand tokens (light) */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 10%; /* Near Black #1A1A1A */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 216 100% 50%; /* Core Blue #0066FF */
+    --primary-foreground: 0 0% 100%; /* on primary */
+    --secondary: 0 0% 96%; /* subtle gray surface */
+    --secondary-foreground: 0 0% 20%;
+    --muted: 0 0% 96%; /* light gray backgrounds */
+    --muted-foreground: 0 0% 40%; /* Medium Gray #999999 approx */
+    --accent: 191 100% 50%; /* Cyan Accent #00D4FF */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 4 100% 59%; /* Error #FF3B30 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 80%; /* Light Gray #CCCCCC */
+    --input: 0 0% 80%;
+    --ring: 216 100% 50%; /* focus ring = brand primary */
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    /* Brand tokens (dark) */
+    --background: 0 0% 7%; /* Deep Black #111111 */
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 191 100% 50%; /* Cyan Accent for primary in dark */
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 14%; /* darker surface */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%; /* Dark Gray #666666 approx */
+    --accent: 191 100% 50%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 4 100% 59%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 40%; /* Dark Gray #666666 */
+    --input: 0 0% 40%;
+    --ring: 191 100% 50%;
   }
 }
 
 @layer base {
   * {
-    @apply border-gray-200;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-white text-gray-900;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -76,7 +79,9 @@
 
 /* Focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  /* Use brand ring color */
+  box-shadow: 0 0 0 2px hsl(var(--ring));
 }
 
 /* Animation utilities */

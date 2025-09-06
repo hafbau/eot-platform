@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '../button';
 import { 
-  Building2, 
   User as UserIcon, 
   Settings, 
   LogOut, 
@@ -42,15 +41,13 @@ const Navbar = ({
   };
   
   return (
-    <nav className="bg-white border-b border-gray-200 px-6 py-4">
+    <nav className="px-6 py-4 border-b border-gray-200">
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center space-x-4">
-          <LinkComponent to="/dashboard" className="flex items-center space-x-2">
-            <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">
-              EOT Intelligence
-            </span>
+          <LinkComponent to="/dashboard" className="flex items-center space-x-3">
+            {/* Use provided SVG logo; 24px height as per brand guide */}
+            <img src="/logo.svg" alt="eot—intel" className="h-8 w-auto" />
           </LinkComponent>
         </div>
         
@@ -62,7 +59,8 @@ const Navbar = ({
               <input
                 type="text"
                 placeholder="Search projects, claims, or delays..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border bg-white text-black placeholder-gray-500"
+                style={{ borderColor: '#CCCCCC' }}
               />
             </div>
           </div>
@@ -88,7 +86,8 @@ const Navbar = ({
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2"
                 >
-                  <div className="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium text-[hsl(var(--primary-foreground))]"
+                       style={{ backgroundColor: 'hsl(var(--primary))' }}>
                     {getInitials(currentUser.name)}
                   </div>
                   <span className="hidden md:block text-sm font-medium">
@@ -97,15 +96,16 @@ const Navbar = ({
                 </Button>
                 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{currentUser.name}</p>
-                      <p className="text-xs text-gray-500">{currentUser.email}</p>
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 border"
+                       style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
+                    <div className="px-4 py-2" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                      <p className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>{currentUser.name}</p>
+                      <p className="text-xs" style={{ opacity: 0.7 }}>{currentUser.email}</p>
                     </div>
                     
                     <LinkComponent
                       to="/settings"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center px-4 py-2 text-sm hover:bg-[hsl(var(--muted))]"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <UserIcon className="h-4 w-4 mr-2" />
@@ -114,7 +114,7 @@ const Navbar = ({
                     
                     <LinkComponent
                       to="/settings"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center px-4 py-2 text-sm hover:bg-[hsl(var(--muted))]"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <Settings className="h-4 w-4 mr-2" />
@@ -123,7 +123,7 @@ const Navbar = ({
                     
                     <button
                       onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center w-full px-4 py-2 text-sm hover:bg-[hsl(var(--muted))]"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign out

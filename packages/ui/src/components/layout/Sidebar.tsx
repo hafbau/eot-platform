@@ -115,9 +115,10 @@ const Sidebar = ({
       className={cn(
         'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
         item.current
-          ? 'bg-blue-100 text-blue-700'
+          ? 'text-[#0066FF]'
           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
       )}
+      style={item.current ? { backgroundColor: 'rgba(0, 102, 255, 0.10)' } : undefined}
     >
       <item.icon className="h-5 w-5 mr-3" />
       {item.name}
@@ -167,8 +168,8 @@ const Sidebar = ({
       </div>
       
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500">
+      <div className="px-4 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+        <div className="text-xs opacity-70">
           <p>EOT Intelligence Platform</p>
           <p>Version 1.0.0</p>
         </div>
